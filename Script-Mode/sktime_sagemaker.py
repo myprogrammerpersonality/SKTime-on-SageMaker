@@ -4,6 +4,9 @@ import joblib
 import pandas as pd
 import numpy as np
 
+def install(package):
+    subprocess.call([sys.executable, "-m", "pip", "install", package])
+
 def model_fn(model_dir):
     # pip install sktime
     install('sktime')
@@ -12,14 +15,10 @@ def model_fn(model_dir):
 
     from sktime.forecasting.naive import NaiveForecaster
     from sktime.forecasting.model_selection import temporal_train_test_split
-    from sktime.performance_metrics.forecasting import smape_loss
+    from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
     
     model = joblib.load(os.path.join(model_dir, 'model.joblib'))
     return model
-
-
-def install(package):
-    subprocess.call([sys.executable, "-m", "pip", "install", package])
 
 
 def main():
@@ -30,7 +29,7 @@ def main():
 
     from sktime.forecasting.naive import NaiveForecaster
     from sktime.forecasting.model_selection import temporal_train_test_split
-    from sktime.performance_metrics.forecasting import smape_loss
+    from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model-dir', type=str, default=os.environ['SM_MODEL_DIR'])
@@ -54,7 +53,7 @@ def main():
     forecaster = NaiveForecaster(strategy="last", sp=12)
     forecaster.fit(y_train)
     y_pred = forecaster.predict(fh)
-    print(f'*** sMAPE Loss : {smape_loss(y_pred, y_test)} ***')
+    print(f'*** sMAPE Loss : {mean_absolute_percentage_error(y_pred, y_test)} ***')
 
     # Save the model
     model = os.path.join(model_dir, 'model.joblib')
