@@ -6,7 +6,7 @@ import sktime
 print('*** sktime imported successfully ***')
 from sktime.forecasting.naive import NaiveForecaster
 from sktime.forecasting.model_selection import temporal_train_test_split
-from sktime.performance_metrics.forecasting import smape_loss
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 import joblib
 import os, json
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     forecaster = NaiveForecaster(strategy="last", sp=12)
     forecaster.fit(y_train)
     y_pred = forecaster.predict(fh)
-    print(f'*** sMAPE Loss : {smape_loss(y_pred, y_test)} ***')
+    print(f'*** sMAPE Loss : {mean_absolute_percentage_error(y_pred, y_test)} ***')
 
     # Save the model
     joblib.dump(forecaster, os.path.join(model_dir, 'model.joblib'))
